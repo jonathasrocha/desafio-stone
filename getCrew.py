@@ -1,6 +1,7 @@
 import os
 import csv
 import tmdbsimple as tmdb
+from urllib3.exceptions import HTTPError
 
 tmdb.API_KEY = os.environ.get('api_key')
 

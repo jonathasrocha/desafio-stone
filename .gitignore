@@ -130,3 +130,5 @@ dmypy.json
 
 # files csv
 *.csv
+# swap files
+*.swp
