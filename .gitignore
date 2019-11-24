@@ -132,3 +132,5 @@ dmypy.json
 *.csv
 # swap files
 *.swp
+# ignore file with data
+/data

@@ -5,7 +5,7 @@ from requests.exceptions import HTTPError
 
 tmdb.API_KEY = os.environ.get('api_key')
 
-def getCrew():
+def getDetails():
     
     # Cria a lista unicas de filmes
     movies_list = []
@@ -31,7 +31,7 @@ def getCrew():
      
     with  open('data/crew.csv', 'w') as file:
     
-        writer = csv.DictWriter(file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path'])
+        writer = csv.DictWriter(file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id'])
         
         writer.writeheader()
         
@@ -47,9 +47,8 @@ def getCrew():
             if(movies.crew):
                
                 for movie in movies.crew:
-                    movie = {k: unicode(v).encode("utf-8") for k,v in movie.iteritems()}
                     writer.writerow(movie)
             i+=1
                         
 if __name__ == '__main__':
-    getCrew()
+    getDetails()
