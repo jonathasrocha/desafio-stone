@@ -1,7 +1,7 @@
 import os
 import csv
 import tmdbsimple as tmdb
-from urllib3.exceptions import HTTPError
+from requests.exceptions import HTTPError
 
 tmdb.API_KEY = os.environ.get('api_key')
 
@@ -11,7 +11,7 @@ def getCrew():
     movies_list = []
     movies = tmdb.Movies()
     
-    # Lê os filmes em cartaz e em lançamento
+    # Le os filmes em cartaz e em lancamento
     with  open('data/movies_nowplaying.csv', 'r') as file:
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
@@ -39,18 +39,16 @@ def getCrew():
         for movie_id in movies_list:
             movies.id = movie_id 
             
+            print("Total processed {} {}%".format(i, 100* (i/len(movies_list))))
             try:
                 movies.credits()
             except HTTPError:
                 continue
-
-            print("Total processed {} {}%".format(i, 100*(i/len(movies_list))))
             if(movies.crew):
                
                 for movie in movies.crew:
-                    
-                    for movie in movies.crew:
-                        writer.writerow(movie)
+                    movie = {k: unicode(v).encode("utf-8") for k,v in movie.iteritems()}
+                    writer.writerow(movie)
             i+=1
                         
 if __name__ == '__main__':
