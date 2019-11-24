@@ -36,35 +36,36 @@ def getDetails():
             movies.id = movie_id 
             movie = ""
             
-            cost_writer = csv.DictWriter(cost, fieldnames =['revenue', 'budget', 'movie_id', 'release_date', 'director_id'])
-            pc_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1'])
-            c_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
+            cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
+            p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1'])
+            classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
 
             cost_writer.writeheader()
-            pc_writer.writeheader()
-            c_writer.writeheader()
+            p_countries_writer.writeheader()
+            classification_writer.writeheader()
             
-            print("Total processed {} {}%".format(i, 100* (1.0*i/len(movies_list))))
+            print("Total processed movie {} {}%".format(i, 100* (1.0*i/len(movies_list))))
             try:
                 movie = movies.info()
             except HTTPError:  
                 continue
             
             if(movie):  
-                for production_countrie in movie.production_countries:
-                    pc_writer.write({'movie_id', movie.id, 
-                                    'release_date', movie.release_date,
-                                    'iso_3166_1': production_countrie.iso_3166_1})
-                                
-                for production_companie in movie.production_companies:
-                    cost_writer.writer({'movie_id': movie.id, 
-                                        'budget': movie.budget/float(len(movie.production_companies)), 
-                                        'revenue': movie.revenue/float(len(movie.production_companies)), 
-                                        'release_date': movie.release_date, 
-                                        'companie_id': production_companie.id }
+                for production_countrie in movies.production_countries:
+                    p_countries_writer.writerow({'movie_id': movies.id, 
+                                        'release_date': movies.release_date,
+                                        'iso_3166_1': production_countrie.get('iso_3166_1')})
+                                        'name': production_countrie.get('name')
 
-                for genre in movie.genres
-                    c_writer.write({ 'movie_id': movie.id, 'genre_id': genre.id})
+                for production_companie in movies.production_companies:
+                    cost_writer.writerow({'movie_id': movies.id, 
+                                        'budget': movies.budget/float(len(movies.production_companies)), 
+                                        'revenue': movies.revenue/float(len(movies.production_companies)), 
+                                        'release_date': movies.release_date, 
+                                        'companie_id': production_companie.get('id'),
+                                        'companie_name': production_companie.get('name')})
+                for genre in movies.genres:
+                    classification_writer.writerow({ 'movie_id': movies.id, 'genre_id': genre.get('id')})
             i+=1
 
 if __name__ == '__main__':
