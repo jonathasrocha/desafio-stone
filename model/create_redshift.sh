@@ -14,6 +14,7 @@ aws redshift wait cluster-available --cluster-indentifier $cluster_name
 endpoint=$(aws redshift describe-clusters --cluster-identifier $cluster_name --query "Clusters[*].Endpoint.Address" --output text)
 port=$(aws redshift describe-clusters --cluster-identifier $cluster_name --query "Clusters[*].Endpoint.Port" --output text)
 
+sudo su postgres
 #connect to just cluster created 
 psql --host=$endpoint --port=$port --username=$redshift_username --dbname=$redshift_dbname -f model.sql
 
