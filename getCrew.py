@@ -31,7 +31,7 @@ def getDetails():
      
     with  open('data/crew.csv', 'w') as file:
     
-        writer = csv.DictWriter(file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id'])
+        writer = csv.DictWriter(file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id', 'revenue', 'budget', 'release_date'])
         
         writer.writeheader()
         
@@ -48,6 +48,9 @@ def getDetails():
                
                 for movie in movies.crew:
                     movie['movie_id'] = movies.id
+                    movie['revenue'] = movies.revenue
+                    movie['budget']  = movies.budget
+                    movie['release_date'] = movies.release_date
                     writer.writerow(movie)
             i+=1
                         
