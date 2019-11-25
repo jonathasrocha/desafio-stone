@@ -47,6 +47,7 @@ def getDetails():
             if(movies.crew):
                
                 for movie in movies.crew:
+                    movie['movie_id'] = movies.id
                     writer.writerow(movie)
             i+=1
                         
