@@ -10,7 +10,8 @@ def getDetails():
     # Cria a lista unicas de filmes
     movies_list = []
     movies = tmdb.Movies()
-    
+    person = []
+
     # Le os filmes em cartaz e em lancamento
     with  open('data/movies_nowplaying.csv', 'r') as file:
         reader = csv.reader(file, delimiter=',')
@@ -29,11 +30,13 @@ def getDetails():
     print("Total movies %d"%len(movies_list))
     i = 0
      
-    with  open('data/crew.csv', 'w') as file:
+    with  open('data/crew.csv', 'w') as crew_file, open('data/person.csv', 'w') as person_file:
     
-        writer = csv.DictWriter(file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id'])
+        writer = csv.DictWriter(crew_file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id'])
+        person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path'])
         
         writer.writeheader()
+        person_writer.writeheader()
         
         # Atribui os filmas a lista
         for movie_id in movies_list:
@@ -46,9 +49,13 @@ def getDetails():
                 continue
             if(movies.crew):
                
-                for movie in movies.crew:
-                    movie['movie_id'] = movies.id
-                    writer.writerow(movie)
+                for crew in movies.crew:
+                    if crew.get('id') not in person:
+                        person.append(crew.get('id'))
+                        person_writer.writerow({'id': crew.get('id'), 'name': crew.get('name'), 'profile_path': crew.get('profile_path')})
+
+                    crew['movie_id'] = movies.id
+                print(person)
             i+=1
                         
 if __name__ == '__main__':
