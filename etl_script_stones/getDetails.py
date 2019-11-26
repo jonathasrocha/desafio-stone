@@ -37,7 +37,7 @@ def getDetails():
             movie = ""
             
             cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
-            p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1'])
+            p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1', 'name'])
             classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
 
             cost_writer.writeheader()
@@ -53,9 +53,9 @@ def getDetails():
             if(movie):  
                 for production_countrie in movies.production_countries:
                     p_countries_writer.writerow({'movie_id': movies.id, 
-                                        'release_date': movies.release_date,
-                                        'iso_3166_1': production_countrie.get('iso_3166_1')})
-                                        'name': production_countrie.get('name')
+                                        'release_date': movies.release_date, 
+                                        'iso_3166_1': production_countrie.get('iso_3166_1'),
+                                        'name': production_countrie.get('name')})
 
                 for production_companie in movies.production_companies:
                     cost_writer.writerow({'movie_id': movies.id, 
