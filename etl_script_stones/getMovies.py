@@ -15,14 +15,20 @@ def getNowplayingMovies():
     fieldnames['status'] = ''
     fieldnames = fieldnames.keys()
 
-    with open('data/movies_nowplaying.csv', 'w', newline='') as movies_csv: 
+    with open('data/movies_nowplaying.csv', 'w', newline='') as movies_csv, open('data/status_nowplaying.csv', 'w', newline='') as s_now_csv: 
+        
         writer = csv.DictWriter(movies_csv, fieldnames = fieldnames)
+        writer_status = csv.DictWriter(s_now_csv, fieldnames = ['movie_id', 'status'])
+        
+        writer_status.writeheader()
         writer.writeheader()
+        
         for page in range(1, pages +1):
             movies_now_playing = movies.now_playing(page = page, region='US')
             for movie in movies_now_playing.get('results'):
-                movie['status'] = 'now playing'
+                writer_status.writerow({'movie_id': movie.get('id'), 'status': 'now playing'})
                 writer.writerow(movie)
+
 
 def getUpcomingMovies():
     
@@ -34,13 +40,16 @@ def getUpcomingMovies():
     fieldnames['status'] = ''
     fieldnames = fieldnames.keys()
 
-    with open('data/movies_upcoming.csv', 'w', newline='') as movies_csv: 
+    with open('data/movies_upcoming.csv', 'w', newline='') as movies_csv, open('data/status_upcoming.csv', 'w', newline='') as s_up_csv: 
         writer = csv.DictWriter(movies_csv, fieldnames = fieldnames)
+        
+        writer_status = csv.DictWriter(s_up_csv, fieldnames = ['movie_id', 'status'])
         writer.writeheader()
+       
         for page in range(1, pages +1):
             movies_now_playing = movies.now_playing(page = page, region='US')
             for movie in movies_now_playing.get('results'):
-                movie['status'] = 'up coming'
+                writer_status.writerow({'movie_id': movie.get('id'), 'status': 'up coming'})
                 writer.writerow(movie)
 
 if __name__ == '__main__':
