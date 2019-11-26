@@ -16,44 +16,45 @@ with DAG(
    default_args=default_args
    ) as dag:
 
-t1 = BashOperator(
-   task_id='read_movies',
-   bash_command="""
-   cd $AIRFLOW_HOME/dags/etl_scripts/
-   python getMovies.py
-   """)
+    task_read_movie = BashOperator(
+        task_id='read_movies',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_script_stones/
+        python getMovies.py
+    """)
 
-t2 = BashOperator(
-   task_id='read_genre',
-   bash_command="""
-   cd $AIRFLOW_HOME/dags/etl_scripts/
-   python getGenre.py
-   """)
-t1 >> t2
+    task_read_genre = BashOperator(
+        task_id='read_genre',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        python getGenre.py
+    """)
 
-t3 = BashOperator(
-   task_id='read_crew',
-   bash_command="""
-   cd $AIRFLOW_HOME/dags/etl_scripts/
-   python getCrew.py
+    task_read_crew = BashOperator(
+        task_id='read_crew',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        python getCrew.py
+    """)
+    task_read_details = BashOperator(
+        task_id='read_details',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        python getDetails.py
    """)
-t1 >> t3
-t4 = BashOperator(
-   task_id='read_details',
-   bash_command="""
-   cd $AIRFLOW_HOME/dags/etl_scripts/
-   python getDetails.py
+    
+    task_upload = BashOperator(
+        task_id='upload',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_scripts_stones/upload_data
+        upload_data.sh
    """)
-t1 >> t4
-t5 = BashOperator(
-   task_id='read_details',
-   bash_command="""
-   cd $AIRFLOW_HOME/dags/etl_scripts/upload_data
-   upload_data.sh
-   """)
-t2 >> t5
-t3 >> t5
-t4 >> t5
+    
+    task_read_movie >> task_read_details
+    task_read_movie >> task_read_crew
+    task_read_crew >> task_upload
+    task_read_details >> task_upload
+    task_read_genre >> task_upload
 
 if __name__ == "__main__":
     dag.cli()
