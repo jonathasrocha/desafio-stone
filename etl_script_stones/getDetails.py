@@ -31,18 +31,22 @@ def getDetails():
     i = 0
 
     with  open('data/cost.csv', 'w') as cost, open('data/production_countries.csv', 'w') as prod_countries, open('data/classification.csv', 'w') as classi:
-        # Atribui os filmas a lista
+        
+        #Declara os escritores de arquivos e seus cabeçalhos
+        
+        cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
+        p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1', 'name'])
+        classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
+
+        cost_writer.writeheader()
+        p_countries_writer.writeheader()
+        classification_writer.writeheader()
+        
         for movie_id in movies_list:
+            
             movies.id = movie_id 
             movie = ""
             
-            cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
-            p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1', 'name'])
-            classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
-
-            cost_writer.writeheader()
-            p_countries_writer.writeheader()
-            classification_writer.writeheader()
             
             print("Total processed movie {} {}%".format(i, 100* (1.0*i/len(movies_list))))
             try:
