@@ -32,10 +32,10 @@ def getDetails():
      
     with  open('data/crew.csv', 'w') as crew_file, open('data/person.csv', 'w') as person_file:
     
-        writer = csv.DictWriter(crew_file, fieldnames=['credit_id', 'department', 'gender', 'id', 'job', 'name', 'profile_path', 'movie_id'])
-        person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path'])
+        crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
+        person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
         
-        writer.writeheader()
+        crew_writer.writeheader()
         person_writer.writeheader()
         
         # Atribui os filmas a lista
@@ -52,10 +52,16 @@ def getDetails():
                 for crew in movies.crew:
                     if crew.get('id') not in person:
                         person.append(crew.get('id'))
-                        person_writer.writerow({'id': crew.get('id'), 'name': crew.get('name'), 'profile_path': crew.get('profile_path')})
-
-                    crew['movie_id'] = movies.id
-                print(person)
+                        person_writer.writerow({'id': crew.get('id'), 
+                                                'name': crew.get('name'), 
+                                                'profile_path': crew.get('profile_path'),
+                                                'gender': crew.get('gender')
+                                                })
+                        crew_writer.writerow({'movie_id': movies.id,
+                                            'person_id': crew.get('id'),
+                                            'job': crew.get('job'),
+                                            'department': crew.get('department')
+                                            })
             i+=1
                         
 if __name__ == '__main__':
