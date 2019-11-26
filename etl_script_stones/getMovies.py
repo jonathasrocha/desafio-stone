@@ -8,7 +8,7 @@ tmdb.API_KEY = os.environ.get('api_key')
 def getNowplayingMovies():
     
     movies = tmdb.Movies()
-    movies_now_playing = movies.now_playing()
+    movies_now_playing = movies.now_playing(region='US')
     pages = movies_now_playing.get('total_pages')
     
     fieldnames = movies_now_playing.get('results')[0]
@@ -19,7 +19,7 @@ def getNowplayingMovies():
         writer = csv.DictWriter(movies_csv, fieldnames = fieldnames)
         writer.writeheader()
         for page in range(1, pages +1):
-            movies_now_playing = movies.now_playing(page = page)
+            movies_now_playing = movies.now_playing(page = page, region='US')
             for movie in movies_now_playing.get('results'):
                 movie['status'] = 'now playing'
                 writer.writerow(movie)
@@ -27,7 +27,7 @@ def getNowplayingMovies():
 def getUpcomingMovies():
     
     movies = tmdb.Movies()
-    movies_now_playing = movies.upcoming()
+    movies_now_playing = movies.upcoming(region='US')
     pages = movies_now_playing.get('total_pages')
     
     fieldnames = movies_now_playing.get('results')[0]
@@ -38,7 +38,7 @@ def getUpcomingMovies():
         writer = csv.DictWriter(movies_csv, fieldnames = fieldnames)
         writer.writeheader()
         for page in range(1, pages +1):
-            movies_now_playing = movies.now_playing(page = page)
+            movies_now_playing = movies.now_playing(page = page, region='US')
             for movie in movies_now_playing.get('results'):
                 movie['status'] = 'up coming'
                 writer.writerow(movie)
