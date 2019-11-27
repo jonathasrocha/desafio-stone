@@ -43,8 +43,14 @@ with DAG(
         python getDetails.py
    """)
     
-    task_upload = BashOperator(
-        task_id='upload',
+    task_movies_from_crew = BashOperator(
+        task_id='task_movies_from_crew',
+        bash_command="""
+        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        python getMoviesFromCrew.py
+    """
+    task_upload = BashOperator(task_id=
+        'upload',
         bash_command="""
         cd $AIRFLOW_HOME/dags/etl_scripts_stones/upload_data
         upload_data.sh
@@ -52,9 +58,10 @@ with DAG(
     
     task_read_movie >> task_read_details
     task_read_movie >> task_read_crew
-    task_read_crew >> task_upload
+    task_read_crew >> task_movies_from_crew 
     task_read_details >> task_upload
     task_read_genre >> task_upload
+    task_movies_from_crew >> task_upload
 
 if __name__ == "__main__":
     dag.cli()
