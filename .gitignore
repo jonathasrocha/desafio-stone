@@ -133,4 +133,4 @@ dmypy.json
 # swap files
 *.swp
 # ignore file with data
-/data
+/data/*

@@ -53,7 +53,7 @@ with DAG(
         'upload',
         bash_command="""
         cd $AIRFLOW_HOME/dags/etl_script_stones/upload_data
-        upload_data.sh
+        ./upload_data.sh
    """)
     
     task_read_movie >> task_read_details

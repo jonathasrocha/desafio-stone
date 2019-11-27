@@ -30,5 +30,6 @@ def getUniqueMovies():
     return movies_list
 
 if __name__ == '__main__':
-    movies_list = getDetails()
-    Movies.getDetailFromListMovie(movies_list)
+    movies = Movies()
+    movies_list = getUniqueMovies()
+    movies.getDetailFromListMovie(movies_list)
