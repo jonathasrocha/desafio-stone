@@ -5,13 +5,13 @@ from airflow.operators.bash_operator import BashOperator
 default_args = {
    'owner': 'jonathas rocha',
    'depends_on_past': False,
-   'start_date': datetime(2019, 25, 1),
+   'start_date': datetime(2019, 12, 27),
    'retries': 0,
    }
 
 with DAG(
-   'Desafio tecnico Stones',
-   schedule_interval=timedelta(minutes=1),
+   'Desafio_tecnico_Stones',
+   schedule_interval='@daily',
    catchup=False,
    default_args=default_args
    ) as dag:
@@ -48,7 +48,7 @@ with DAG(
         bash_command="""
         cd $AIRFLOW_HOME/dags/etl_scripts_stones/
         python getMoviesFromCrew.py
-    """
+    """)
     task_upload = BashOperator(task_id=
         'upload',
         bash_command="""
