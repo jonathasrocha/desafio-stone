@@ -5,7 +5,7 @@ from airflow.operators.bash_operator import BashOperator
 default_args = {
    'owner': 'jonathas rocha',
    'depends_on_past': False,
-   'start_date': datetime(2019, 12, 27),
+   'start_date': datetime(2019, 11, 27),
    'retries': 0,
    }
 
@@ -26,33 +26,33 @@ with DAG(
     task_read_genre = BashOperator(
         task_id='read_genre',
         bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        cd $AIRFLOW_HOME/dags/etl_script_stones/
         python getGenre.py
     """)
 
     task_read_crew = BashOperator(
         task_id='read_crew',
         bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        cd $AIRFLOW_HOME/dags/etl_script_stones/
         python getCrew.py
     """)
     task_read_details = BashOperator(
         task_id='read_details',
         bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        cd $AIRFLOW_HOME/dags/etl_script_stones/
         python getDetails.py
    """)
     
     task_movies_from_crew = BashOperator(
         task_id='task_movies_from_crew',
         bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_scripts_stones/
+        cd $AIRFLOW_HOME/dags/etl_script_stones/
         python getMoviesFromCrew.py
     """)
     task_upload = BashOperator(task_id=
         'upload',
         bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_scripts_stones/upload_data
+        cd $AIRFLOW_HOME/dags/etl_script_stones/upload_data
         upload_data.sh
    """)
     
