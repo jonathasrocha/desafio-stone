@@ -1,6 +1,15 @@
 from airflow import DAG
 from datetime import datetime, timedelta
 from airflow.operators.bash_operator import BashOperator
+from airflow.operators import PythonOperator
+import airflow.hooks.S3_hook
+import os
+
+def upload_file_to_S3(path, key, bucket_name):
+    hook = airflow.hooks.S3_hook.S3Hook(os.environ.get('bucket_name'))
+    for file_ in os.listdir(path):
+        filename = os.path.join(path,file_)
+        hook.load_file(filename, file_, bucket_name, replace=True)
 
 default_args = {
    'owner': 'jonathas rocha',
@@ -15,7 +24,7 @@ with DAG(
    catchup=False,
    default_args=default_args
    ) as dag:
-
+    
     task_read_movie = BashOperator(
         task_id='read_movies',
         bash_command="""
@@ -49,12 +58,14 @@ with DAG(
         cd $AIRFLOW_HOME/dags/etl_script_stones/
         python getMoviesFromCrew.py
     """)
-    task_upload = BashOperator(task_id=
-        'upload',
-        bash_command="""
-        cd $AIRFLOW_HOME/dags/etl_script_stones/upload_data
-        ./upload_data.sh
-   """)
+    task_upload = PythonOperator(
+        task_id='upload_to_S3',
+        python_callable=upload_file_to_S3,
+        op_kwargs={
+        'path': '/home/jonathas/dags/etl_script_stones/data/',
+        'key': 'movies_nowplaying.csv',
+        'bucket_name': 'stones11323',
+        })
     
     task_read_movie >> task_read_details
     task_read_movie >> task_read_crew
