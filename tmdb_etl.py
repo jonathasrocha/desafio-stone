@@ -63,7 +63,7 @@ with DAG(
         task_id='upload_to_S3',
         python_callable=upload_file_to_S3,
         op_kwargs={
-        'path': '/home/jonathas/dags/etl_script_stones/data/',
+        'path': '/home/jonathas/airflow/dags/etl_script_stones/data/',
         'key': 'movies_nowplaying.csv',
         'bucket_name': 'stones11323',
         })
