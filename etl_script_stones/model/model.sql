@@ -45,7 +45,8 @@ CREATE TABLE IF NOT EXISTS
 public.f_crew(
 	movie_id DOUBLE PRECISION REFERENCES d_movie(movie_id),
 	person_id DOUBLE PRECISION REFERENCES d_person(person_id),
-	job VARCHAR(200)
+	job VARCHAR(200),
+	departament VARCHAR(200)
 )
 compound sortkey(movie_id, person_id, job);
 

@@ -2,7 +2,7 @@ import os
 import csv
 import tmdbsimple as tmdb
 from requests.exceptions import HTTPError
-
+from movies.Movies import Movies
 tmdb.API_KEY = os.environ.get('api_key')
 
 def getDetails():
@@ -27,42 +27,9 @@ def getDetails():
             if movie[4] not in movies_list:
                 movies_list.append(movie[4])
     
-    print("Total movies %d"%len(movies_list))
-    i = 0
-     
-    with  open('data/crew.csv', 'w') as crew_file, open('data/person.csv', 'w') as person_file:
-    
-        crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
-        person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
-        
-        crew_writer.writeheader()
-        person_writer.writeheader()
-        
-        # Atribui os filmas a lista
-        for movie_id in movies_list:
-            movies.id = movie_id 
-            
-            print("Total processed {} {}%".format(i, 100* (i/len(movies_list))))
-            try:
-                movies.credits()
-            except HTTPError:
-                continue
-            if(movies.crew):
-               
-                for crew in movies.crew:
-                    if crew.get('id') not in person:
-                        person.append(crew.get('id'))
-                        person_writer.writerow({'id': crew.get('id'), 
-                                                'name': crew.get('name'), 
-                                                'profile_path': crew.get('profile_path'),
-                                                'gender': crew.get('gender')
-                                                })
-                        crew_writer.writerow({'movie_id': movies.id,
-                                            'person_id': crew.get('id'),
-                                            'job': crew.get('job'),
-                                            'department': crew.get('department')
-                                            })
-            i+=1
+    return movie_list
                         
 if __name__ == '__main__':
-    getDetails()
+    movies = Movie()
+    movies_list = getDetails()
+    movies.getCrewFormListMovie(movies_list)
