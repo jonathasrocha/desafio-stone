@@ -18,15 +18,15 @@ def getUniqueMovies():
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
         for movie in reader:
-            if movie[4] not in movies_list:
-                movies_list.append(movie[4])
+            if movie[0] not in movies_list:
+                movies_list.append(movie[0])
 
     with  open('data/movies_upcoming.csv', 'r') as file:
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
         for movie in reader:
-            if movie[4] not in movies_list:
-                movies_list.append(movie[4])
+            if movie[0] not in movies_list:
+                movies_list.append(movie[0])
     return movies_list
 
 if __name__ == '__main__':

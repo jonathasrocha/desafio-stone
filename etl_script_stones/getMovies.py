@@ -1,7 +1,7 @@
 import tmdbsimple as tmdb
 import csv
 import os
-from datetime import datime 
+from datetime import datetime 
 
 #Defino a chave copiando da viariavel de ambiente
 tmdb.API_KEY = os.environ.get('api_key')
@@ -15,7 +15,7 @@ def getNowplayingMovies():
 
     with open('data/movies_nowplaying.csv', 'w', newline='') as movies_csv, open('data/status_nowplaying.csv', 'w', newline='') as s_now_csv: 
         
-        movie_writer = csv.DictWriter(movie_file, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
+        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
         writer_status = csv.DictWriter(s_now_csv, fieldnames = ['movie_id', 'status', 'status_date'])
         
         writer_status.writeheader()
@@ -43,7 +43,7 @@ def getUpcomingMovies():
 
     with open('data/movies_upcoming.csv', 'w', newline='') as movies_csv, open('data/status_upcoming.csv', 'w', newline='') as s_up_csv: 
         
-        movie_writer = csv.DictWriter(movie_file, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
+        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
         writer_status = csv.DictWriter(s_up_csv, fieldnames = ['movie_id', 'status', 'status_date' ])
         
         writer_status.writeheader()
@@ -59,6 +59,7 @@ def getUpcomingMovies():
                                 'populary': movie.get('populary'),
                                 'poster_path': movie.get('poster_path'),
                                 'adult': movie.get('adult'),
+                                'vote_average': movie.get('vote_average')})
 
 if __name__ == '__main__':
     getNowplayingMovies()

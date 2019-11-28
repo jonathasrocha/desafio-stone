@@ -9,6 +9,7 @@ def upload_file_to_S3(path, key, bucket_name):
     hook = airflow.hooks.S3_hook.S3Hook(os.environ.get('bucket_name'))
     for file_ in os.listdir(path):
         filename = os.path.join(path,file_)
+        print(filename)
         hook.load_file(filename, file_, bucket_name, replace=True)
 
 default_args = {

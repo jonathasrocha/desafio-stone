@@ -3,6 +3,7 @@ import tmdbsimple as tmdb
 import os
 import csv
 import json
+from datetime import datetime
 
 tmdb.API_KEY = os.environ.get('api_key')
 movies = tmdb.Movies()
@@ -16,13 +17,14 @@ class Movies():
         print("Total movies %d"%len(movies_list))
         i = 0
         
+        timestamp = datetime.now().strftime("%H%M%S")
     
-        production_path = 'data/production_countries.csv'
-        classification_path = 'data/classification.csv'
-        cost_path = 'data/cost.csv'
-        
+        production_path = 'data/production_countries_{}.csv'.format(timestamp)
+        classification_path = 'data/classification_{}.csv'.format(timestamp)
+        cost_path = 'data/cost_{}.csv'.format(timestamp)
+        movies_path = 'data/movies_{}'.format(timestamp)
 
-        with open(cost_path, 'a') as cost, open(production_path, 'a') as prod_countries, open(classification_path, 'a') as classi, open('data/movie_crew.csv', 'a') as movie_file:
+        with open(cost_path, 'a') as cost, open(production_path, 'a') as prod_countries, open(classification_path, 'a') as classi, open(movies_path, 'a') as movie_file:
 
             #Declara os escritores de arquivos e seus cabeçalhos
 
@@ -68,34 +70,41 @@ class Movies():
                     movie_writer.writerow({'movie_id': movies.id, 
                                             'title': movies.title, 
                                             'original_language': movies.original_language,
-                                            'populary': movies.populary,
+                                            'populary': movies.popularity,
                                             'poster_path': movies.poster_path,
                                             'adult': movies.adult,
                                             'vote_average': movies.vote_average})
                 i+=1
         
-       def getCrewFormListMovie(self, movies_list):
-            print("Total movies %d"%len(movies_list))
-            i = 0
+    def getCrewFormListMovie(self, movies_list):
+        print("Total movies %d"%len(movies_list))
+        i = 0
+        person = []
+        
+        
+        timestamp = datetime.now().strftime("%H%M%S")
+        crew_filename = 'data/crew.csv'.format(timestamp)
+        person_filename = 'data/person_{}.csv'.format(timestamp)
 
-            with  open('data/crew.csv', 'a') as crew_file, open('data/person.csv', 'a') as person_file:
+        with  open(crew_filename, 'a') as crew_file, open(person_filename, 'a') as person_file:
 
-                crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
-                person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
+            crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
+            person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
 
-                crew_writer.writeheader()
-                person_writer.writeheader()
+            #crew_writer.writeheader()
+            person_writer.writeheader()
 
-                # Atribui os filmas a lista
-                for movie_id in movies_list:
-                    movies.id = movie_id
+            # Atribui os filmas a lista
+            for movie_id in movies_list:
+                movies.id = movie_id
 
-                    print("Total processed {} {}%".format(i, 100* (i/len(movies_list))))
-                    try:
-                        movies.credits()
-                    except HTTPError:
-                        continue
-                    if(movies.crew):
+                print("Total processed {} {}%".format(i, 100* (i/len(movies_list))))
+                try:
+                    movies.credits()
+                except HTTPError:
+                    continue
+                
+                if(movies.crew):
 
                     for crew in movies.crew:
                         if crew.get('id') not in person:
@@ -103,13 +112,12 @@ class Movies():
                             person_writer.writerow({'id': crew.get('id'),
                                                     'name': crew.get('name'),
                                                     'profile_path': crew.get('profile_path'),
-                                                    'gender': crew.get('gender')
-                                                    })
-                            crew_writer.writerow({'movie_id': movies.id,
-                                                'person_id': crew.get('id'),
-                                                'job': crew.get('job'),
-                                                'department': crew.get('department')
-                                                })
-                    i+=1
+                                                    'gender': crew.get('gender')})
+                    
+                        crew_writer.writerow({'movie_id': movies.id,
+                                            'person_id': crew.get('id'),
+                                            'job': crew.get('job'),
+                                            'department': crew.get('department')})
+                i+=1
 
 

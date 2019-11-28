@@ -21,6 +21,7 @@ public.d_person(
 	person_id DOUBLE PRECISION PRIMARY KEY,
 	name VARCHAR(35),
 	profile_path VARCHAR(150),
+	gender VARCHAR(2)
 );
 
 CREATE TABLE IF NOT EXISTS 
@@ -28,7 +29,7 @@ public.d_movie(
 	movie_id DOUBLE PRECISION PRIMARY KEY, 
 	title VARCHAR(150),
 	original_language VARCHAR(2),
-	populary DOUBLE PRECISION,
+	popularity DOUBLE PRECISION,
 	poster_path VARCHAR(150),
 	adult BOOLEAN,
 	status VARCHAR(50),
