@@ -5,6 +5,7 @@ from airflow.operators import PythonOperator
 import airflow.hooks.S3_hook
 import os
 from airflow.hooks.postgres_hook import PostgresHook 
+import shutil 
 
 dest_tables = (['d_movie','d_genre','d_person', 'f_production_countries', 'f_cost', 'f_crew', 'f_classification', 'f_status'])
 dest_tables.append({'table_name': 'd_movie', 'keys': ['movie_id'], 'field': ['title', 'original_title', 'popularity', 'poster_path', 'adult', 'status', 'vote_average']})
@@ -18,13 +19,20 @@ dest_tables.append({'table_name': 'f_production_countries', 'keys': ['movie_id',
 #src_tables = [item+"_stage" for item in dest_tables]
 
 def upload_file_to_S3(path, key, s3_bucket):
+    print("{} ".format(path))
     hook = airflow.hooks.S3_hook.S3Hook(os.environ.get('bucket_name'))
-    for file_ in os.listdir(path):
-        filename = os.path.join(path,file_)
-        print(filename)
-        hook.load_file(filename, file_, s3_bucket, replace=True)
-        os.rename(path, os.path.join('sent', key))
-
+    sent_path = path+'sent' 
+    list_dir = os.listdir(path)
+    
+    i =0
+    while i < len(list_dir):
+        old_path = os.path.join(path, list_dir[i])
+        new_path = os.path.join(sent_path, list_dir[i])
+        if os.path.isfile(old_path):
+            print( "old {} new{}".format(old_path, new_path)) 
+            hook.load_file(old_path, list_dir[i], s3_bucket, replace=True)
+            shutil.move(old_path, new_path)
+        i+=1
 def load_S3_Redshift(table, s3_bucket, s3_path, iam, role, delimiter, region, ignoreheader):
     
     pg_hook = PostgresHook(postgres_conn_id='dw_stones')
