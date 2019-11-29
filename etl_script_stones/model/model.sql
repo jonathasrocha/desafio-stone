@@ -1,7 +1,7 @@
 CREATE TABLE if not exists 
 public.d_date(
 	date_sk BIGINT IDENTITY(0,1) PRIMARY KEY,
-	field_date TIMESTAMP,
+	field_date DATE,
 	year SMALLINT,
 	month SMALLINT,
 	day_of_year SMALLINT,
@@ -13,12 +13,12 @@ public.d_date(
 	month_desc VARCHAR(30),
 	month_desc_short VARCHAR(3),
 	quarter VARCHAR(1),
-	half VARCHAR(1),
+	half VARCHAR(1)
 );
 
 CREATE TABLE IF NOT EXISTS 
 public.d_person(
-	person_id DOUBLE PRECISION PRIMARY KEY,
+	person_id BIGINT PRIMARY KEY,
 	name VARCHAR(35),
 	profile_path VARCHAR(150),
 	gender VARCHAR(2)
@@ -26,7 +26,7 @@ public.d_person(
 
 CREATE TABLE IF NOT EXISTS 
 public.d_movie(
-	movie_id DOUBLE PRECISION PRIMARY KEY, 
+	movie_id BIGINT PRIMARY KEY, 
 	title VARCHAR(150),
 	original_language VARCHAR(2),
 	popularity DOUBLE PRECISION,
@@ -38,51 +38,61 @@ public.d_movie(
 
 CREATE TABLE IF NOT EXISTS 
 public.d_genre(
-	genre_id DOUBLE PRECISION PRIMARY KEY,
+	genre_id BIGINT PRIMARY KEY,
 	name VARCHAR(200)
 );
 
 CREATE TABLE IF NOT EXISTS 
 public.f_crew(
-	movie_id DOUBLE PRECISION REFERENCES d_movie(movie_id),
-	person_id DOUBLE PRECISION REFERENCES d_person(person_id),
+	movie_sk BIGINT REFERENCES d_movie(movie_id),
+	person_sk BIGINT  REFERENCES d_person(person_id),
 	job VARCHAR(200),
 	departament VARCHAR(200)
 )
-compound sortkey(movie_id, person_id, job);
+compound sortkey(movie_sk, person_sk, job);
 
 CREATE TABLE IF NOT EXISTS
 public.f_cost(
-	cost BIGINT IDENTITY(0,1) PRIMARY KEY,
-	movie_id DOUBLE PRECISION REFERENCES d_movies(movie_id),
+	movie_sk BIGINT REFERENCES d_movie(movie_id),
 	company_name VARCHAR(200),
-	budget DOUBLE PRECISION,
-	revenue DOUBLE PRECISION,
+	budget DECIMAL(10,2),
+	revenue DECIMAL(10,2),
 	release_date DATE
 )
-compound sortkey(movied, company_name, release_date);
+compound sortkey(movie_sk, company_name, release_date);
 
 CREATE TABLE IF NOT EXISTS
 public.f_classification(
-	movie_id DOUBLE PRECISION REFERENCES d_movies(movie_id),
-	genre_id DOUBLE PRECISION REFERENCES d_genre(genre_id),
+	movie_sk BIGINT REFERENCES d_movie(movie_id),
+	genre_sk BIGINT REFERENCES d_genre(genre_id),
 	release_date DATE
 )
-compound sortkey(movie_id, genre_id);
+compound sortkey(movie_sk, genre_sk);
 
 CREATE TABLE IF NOT EXISTS
-public.f_production_contries(
-	movie_id DOUBLE PRECISION REFERENCES d_movies(movie_id),
+public.f_production_countries(
+	movie_sk BIGINT REFERENCES d_movie(movie_id),
 	release_date TIMESTAMP,
 	iso_3166_1 VARCHAR(2),
 	name VARCHAR(100)
 )
-compound sortkey(movie_id, release_date, iso_3166_1);
+compound sortkey(movie_sk, release_date, iso_3166_1);
 
 CREATE TABLE IF NOT EXISTS
 public.f_status(
-	movie_id DOUBLE PRECISION REFERENCES d_movies(movie_id),
+	movie_sk BIGINT REFERENCES d_movie(movie_id),
 	date_status DATE DEFAULT GETDATE(),
 	status VARCHAR(100)
 )
-compound sortkey(movie_id, date_status, status)
+compound sortkey(movie_sk, date_status, status);
+
+CREATE TABLE d_movie_stage(LIKE d_movie);
+CREATE TABLE d_genre_stage(LIKE d_genre);
+CREATE TABLE d_date_stage(LIKE d_date);
+CREATE TABLE d_person_stage(LIKE d_person);
+CREATE TABLE f_cost_stage(LIKE f_cost);
+CREATE TABLE f_production_countries_stage(LIKE f_production_countries);
+CREATE TABLE f_status_stage(LIKE f_status);
+CREATE TABLE f_classification_stage(LIKE f_classification);
+CREATE TABLE f_crew_stage(LIKE f_crew);
+

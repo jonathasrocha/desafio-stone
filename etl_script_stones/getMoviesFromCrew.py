@@ -15,7 +15,7 @@ def getMoviesFromJob(job="Director"):
     person_director = []
 
     # Le a equipe tecnica, separa por diretor e busca seus filmes 
-    with  open('data/crew.csv', 'r') as file:
+    with  open('data/f_crew_.csv', 'r') as file:
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
         for crew in reader:

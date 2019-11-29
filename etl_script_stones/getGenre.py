@@ -10,7 +10,7 @@ def getGenre():
     genres_list = genres.movie_list()
     fieldnames = genres_list.get('genres')[0].keys()
     
-    with open('data/genres.csv', 'w') as csv_file:
+    with open('data/d_genres.csv', 'w') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
         

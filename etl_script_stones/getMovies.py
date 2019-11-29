@@ -13,9 +13,9 @@ def getNowplayingMovies():
     pages = movies_now_playing.get('total_pages')
     
 
-    with open('data/movies_nowplaying.csv', 'w', newline='') as movies_csv, open('data/status_nowplaying.csv', 'w', newline='') as s_now_csv: 
+    with open('data/d_movie_nowplaying.csv', 'w', newline='') as movies_csv, open('data/f_status_nowplaying.csv', 'w', newline='') as s_now_csv: 
         
-        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
+        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'popularity', 'poster_path', 'adult','status', 'vote_average'])
         writer_status = csv.DictWriter(s_now_csv, fieldnames = ['movie_id', 'status', 'status_date'])
         
         writer_status.writeheader()
@@ -28,9 +28,10 @@ def getNowplayingMovies():
                 writer_movie.writerow({'movie_id': movie.get('id'),
                                 'title': movie.get('title'),
                                 'original_language': movie.get('original_language'),
-                                'populary': movie.get('populary'),
+                                'popularity': movie.get('popularity'),
                                 'poster_path': movie.get('poster_path'),
                                 'adult': movie.get('adult'),
+                                'status': movie.get('status'),
                                 'vote_average': movie.get('vote_average')})
 
 
@@ -41,9 +42,9 @@ def getUpcomingMovies():
     pages = movies_now_playing.get('total_pages')
     
 
-    with open('data/movies_upcoming.csv', 'w', newline='') as movies_csv, open('data/status_upcoming.csv', 'w', newline='') as s_up_csv: 
+    with open('data/d_movie_upcoming.csv', 'w', newline='') as movies_csv, open('data/f_status_upcoming.csv', 'w', newline='') as s_up_csv: 
         
-        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
+        writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'popularity', 'poster_path', 'adult', 'status', 'vote_average'])
         writer_status = csv.DictWriter(s_up_csv, fieldnames = ['movie_id', 'status', 'status_date' ])
         
         writer_status.writeheader()
@@ -56,9 +57,10 @@ def getUpcomingMovies():
                 writer_movie.writerow({'movie_id': movie.get('id'),
                                 'title': movie.get('title'),
                                 'original_language': movie.get('original_language'),
-                                'populary': movie.get('populary'),
+                                'popularity': movie.get('popularity'),
                                 'poster_path': movie.get('poster_path'),
                                 'adult': movie.get('adult'),
+                                'status': movie.get('status'),
                                 'vote_average': movie.get('vote_average')})
 
 if __name__ == '__main__':

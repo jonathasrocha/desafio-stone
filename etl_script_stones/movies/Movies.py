@@ -19,10 +19,10 @@ class Movies():
         
         timestamp = datetime.now().strftime("%H%M%S")
     
-        production_path = 'data/production_countries_{}.csv'.format(timestamp)
-        classification_path = 'data/classification_{}.csv'.format(timestamp)
-        cost_path = 'data/cost_{}.csv'.format(timestamp)
-        movies_path = 'data/movies_{}'.format(timestamp)
+        production_path = 'data/f_production_countries_{}.csv'.format(timestamp)
+        classification_path = 'data/f_classification_{}.csv'.format(timestamp)
+        cost_path = 'data/f_cost_{}.csv'.format(timestamp)
+        movies_path = 'data/d_movies_{}'.format(timestamp)
 
         with open(cost_path, 'a') as cost, open(production_path, 'a') as prod_countries, open(classification_path, 'a') as classi, open(movies_path, 'a') as movie_file:
 
@@ -31,7 +31,7 @@ class Movies():
             cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
             p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1', 'name'])
             classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
-            movie_writer = csv.DictWriter(movie_file, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult', 'vote_average'])
+            movie_writer = csv.DictWriter(movie_file, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult','status', 'vote_average'])
             
             cost_writer.writeheader()
             p_countries_writer.writeheader()
@@ -73,6 +73,7 @@ class Movies():
                                             'populary': movies.popularity,
                                             'poster_path': movies.poster_path,
                                             'adult': movies.adult,
+                                            'status': movies.status,
                                             'vote_average': movies.vote_average})
                 i+=1
         
@@ -83,15 +84,15 @@ class Movies():
         
         
         timestamp = datetime.now().strftime("%H%M%S")
-        crew_filename = 'data/crew.csv'.format(timestamp)
-        person_filename = 'data/person_{}.csv'.format(timestamp)
+        crew_filename = 'data/f_crew_.csv'.format(timestamp)
+        person_filename = 'data/d_person_{}.csv'.format(timestamp)
 
         with  open(crew_filename, 'a') as crew_file, open(person_filename, 'a') as person_file:
 
             crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
             person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
 
-            #crew_writer.writeheader()
+            crew_writer.writeheader()
             person_writer.writeheader()
 
             # Atribui os filmas a lista
