@@ -7,12 +7,12 @@ import os
 from airflow.hooks.postgres_hook import PostgresHook 
 
 dest_tables = (['d_movie','d_genre','d_person', 'f_production_countries', 'f_cost', 'f_crew', 'f_classification', 'f_status'])
-dest_tables.append({'table_name': 'd_movie', 'keys': ['movie_id'], 'field': ['title' 'original_title', 'popularity', 'poster_path', 'adult', 'vote_average']})
+dest_tables.append({'table_name': 'd_movie', 'keys': ['movie_id'], 'field': ['title', 'original_title', 'popularity', 'poster_path', 'adult', 'status', 'vote_average']})
 dest_tables.append({'table_name': 'd_person', 'keys': ['person_id'], 'field': ['name', 'profile_path', 'gender']})
 dest_tables.append({'table_name': 'd_genre', 'keys': ['genre_id'], 'field': ['name']})
-dest_tables.append({'table_name': 'f_crew', 'keys': ['person_id', 'person_id', 'job'], 'field': ['department']})
-dest_tables.append({'table_name': 'f_status', 'keys': ['movie_id', 'date_status'], 'field': ['status']})
-dest_tables.append({'table_name': 'f_cost', 'keys': ['movie_id', 'company_name'], 'field': ['budget', 'revenue']})
+dest_tables.append({'table_name': 'f_crew', 'keys': ['person_sk', 'person_sk', 'job'], 'field': ['department']})
+dest_tables.append({'table_name': 'f_status', 'keys': ['movie_sk', 'date_status'], 'field': ['status']})
+dest_tables.append({'table_name': 'f_cost', 'keys': ['movie_id', 'company_name', 'release_date'], 'field': ['budget', 'revenue']})
 dest_tables.append({'table_name': 'f_production_countries', 'keys': ['movie_id', 'release_date', 'iso_3166_1'], 'field': ['name']})
 
 #src_tables = [item+"_stage" for item in dest_tables]
@@ -23,7 +23,7 @@ def upload_file_to_S3(path, key, s3_bucket):
         filename = os.path.join(path,file_)
         print(filename)
         hook.load_file(filename, file_, s3_bucket, replace=True)
-        os.rename(path, os.join('sent', key))
+        os.rename(path, os.path.join('sent', key))
 
 def load_S3_Redshift(table, s3_bucket, s3_path, iam, role, delimiter, region, ignoreheader):
     
