@@ -84,7 +84,7 @@ public.f_status(
 	date_status DATE DEFAULT GETDATE(),
 	status VARCHAR(100)
 )
-compound sortkey(movie_sk, date_status, status);
+compound sortkey(movie_sk, date_status);
 
 CREATE TABLE d_movie_stage(LIKE d_movie);
 CREATE TABLE d_genre_stage(LIKE d_genre);
