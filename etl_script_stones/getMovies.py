@@ -16,7 +16,7 @@ def getNowplayingMovies():
     with open('data/d_movie_nowplaying.csv', 'w', newline='') as movies_csv, open('data/f_status_nowplaying.csv', 'w', newline='') as s_now_csv: 
         
         writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'popularity', 'poster_path', 'adult','status', 'vote_average'])
-        writer_status = csv.DictWriter(s_now_csv, fieldnames = ['movie_id', 'status', 'status_date'])
+        writer_status = csv.DictWriter(s_now_csv, fieldnames = ['movie_id', 'status_date', 'status'])
         
         writer_status.writeheader()
         writer_movie.writeheader()
@@ -45,7 +45,7 @@ def getUpcomingMovies():
     with open('data/d_movie_upcoming.csv', 'w', newline='') as movies_csv, open('data/f_status_upcoming.csv', 'w', newline='') as s_up_csv: 
         
         writer_movie = csv.DictWriter(movies_csv, fieldnames=['movie_id', 'title', 'original_language', 'popularity', 'poster_path', 'adult', 'status', 'vote_average'])
-        writer_status = csv.DictWriter(s_up_csv, fieldnames = ['movie_id', 'status', 'status_date' ])
+        writer_status = csv.DictWriter(s_up_csv, fieldnames = ['movie_id', 'status_date', 'status'])
         
         writer_status.writeheader()
         writer_movie.writeheader()

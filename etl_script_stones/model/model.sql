@@ -54,10 +54,10 @@ compound sortkey(movie_sk, person_sk, job);
 CREATE TABLE IF NOT EXISTS
 public.f_cost(
 	movie_sk BIGINT REFERENCES d_movie(movie_id),
-	company_name VARCHAR(200),
-	budget DECIMAL(10,2),
-	revenue DECIMAL(10,2),
-	release_date DATE
+	budget DECIMAL(18,2),
+	revenue DECIMAL(18,2),
+	release_date DATE,
+	company_name VARCHAR(200)
 )
 compound sortkey(movie_sk, company_name, release_date);
 

@@ -28,9 +28,9 @@ class Movies():
 
             #Declara os escritores de arquivos e seus cabeçalhos
 
-            cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_id','companie_name'])
+            cost_writer = csv.DictWriter(cost, fieldnames =['movie_id', 'budget', 'revenue', 'release_date','companie_name'])
             p_countries_writer = csv.DictWriter( prod_countries, fieldnames=['movie_id', 'release_date', 'iso_3166_1', 'name'])
-            classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id'])
+            classification_writer = csv.DictWriter( classi, fieldnames=['movie_id', 'genre_id', 'release_date'])
             movie_writer = csv.DictWriter(movie_file, fieldnames=['movie_id', 'title', 'original_language', 'populary', 'poster_path', 'adult','status', 'vote_average'])
             
             cost_writer.writeheader()
@@ -62,10 +62,11 @@ class Movies():
                                             'budget': movies.budget/float(len(movies.production_companies)),
                                             'revenue': movies.revenue/float(len(movies.production_companies)),
                                             'release_date': movies.release_date,
-                                            'companie_id': production_companie.get('id'),
                                             'companie_name': production_companie.get('name')})
                     for genre in movies.genres:
-                        classification_writer.writerow({ 'movie_id': movies.id, 'genre_id': genre.get('id')})
+                        classification_writer.writerow({ 'movie_id': movies.id, 
+                                                        'genre_id': genre.get('id'), 
+                                                        'release_date': movies.release_date})
                 
                     movie_writer.writerow({'movie_id': movies.id, 
                                             'title': movies.title, 
@@ -92,7 +93,7 @@ class Movies():
             crew_writer = csv.DictWriter(crew_file, fieldnames=['movie_id', 'person_id', 'job', 'department'])
             person_writer = csv.DictWriter(person_file, fieldnames=['id', 'name', 'profile_path', 'gender'])
 
-            crew_writer.writeheader()
+            #crew_writer.writeheader()
             person_writer.writeheader()
 
             # Atribui os filmas a lista
