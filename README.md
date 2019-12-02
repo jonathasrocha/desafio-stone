@@ -82,6 +82,6 @@ Nessa fase foi utilizado o airflow executando 22 passos abaixo. primeiro é lido
 ![](https://workolistexample.s3.amazonaws.com/data-set/airflow_step.png)
 
 
-### Perguntas ###
+### Respostas  ###
 
-<iframe width="800" height="600" src="https://app.powerbi.com/view?r=eyJrIjoiZjFlN2MxYzgtZDUyNS00ZGFmLTllZDctZGUwYjUwNDY3NWI2IiwidCI6Ijc0YTZlMjVhLTY4ZDAtNDcxZS05MzMyLWEwYTBiMDc0YzJkNiJ9" frameborder="0" allowFullScreen="true"></iframe>
+[Respostas](http://bit.ly/2P4HFkP)
