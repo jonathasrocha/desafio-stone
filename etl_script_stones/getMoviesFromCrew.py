@@ -6,6 +6,7 @@ from collections import namedtuple
 from movies.Movies import Movies 
 
 tmdb.API_KEY = os.environ.get('api_key')
+people = tmdb.People()
 
 def getMoviesFromJob(job="Director"):
 
@@ -19,8 +20,16 @@ def getMoviesFromJob(job="Director"):
         reader = csv.reader(file, delimiter=',')
         next(reader, None)
         for crew in reader:
-            if crew[2] == job and crew[0] not in movies_list:
-                movies_list.append(crew[0])
+            if crew[2] == job:
+                people.id = crew[1]
+                try:
+                    credits =people.movie_credits()
+                except HTTPError:
+                    continue
+
+                for cast in credits.get('cast'):
+                    if cast.get('id') not in movies_list:
+                        movies_list.append(cast.get('id'))
     return movies_list
 
 if __name__ == '__main__':

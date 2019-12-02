@@ -51,8 +51,8 @@ def getUpcomingMovies():
         writer_movie.writeheader()
        
         for page in range(1, pages +1):
-            movies_now_playing = movies.now_playing(page = page, region='US')
-            for movie in movies_now_playing.get('results'):
+            movies_upcoming = movies.upcoming(page = page, region='US')
+            for movie in movies_upcoming.get('results'):
                 writer_status.writerow({'movie_id': movie.get('id'), 'status': 'up coming', 'status_date': datetime.now().strftime("%Y-%m-%d")})
                 writer_movie.writerow({'movie_id': movie.get('id'),
                                 'title': movie.get('title'),

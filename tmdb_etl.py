@@ -11,11 +11,11 @@ dest_tables = []
 dest_tables.append({'table_name': 'd_movie', 'keys': ['movie_id'], 'field': ['title', 'original_language', 'popularity', 'poster_path', 'adult', 'status', 'vote_average'], 'haveheader': 1 })
 dest_tables.append({'table_name': 'd_person', 'keys': ['person_id'], 'field': ['name', 'profile_path', 'gender'], 'haveheader': 1 })
 dest_tables.append({'table_name': 'd_genre', 'keys': ['genre_id'], 'field': ['name'], 'haveheader': 1 })
-dest_tables.append({'table_name': 'f_crew', 'keys': ['person_sk', 'person_sk', 'job'], 'field': ['departament'], 'haveheader': 0 })
-dest_tables.append({'table_name': 'f_status', 'keys': ['movie_sk', 'date_status'], 'field': ['status'], 'haveheader': 1 })
-dest_tables.append({'table_name': 'f_cost', 'keys': ['movie_sk', 'company_name', 'release_date'], 'field': ['budget', 'revenue'], 'haveheader': 1 })
-dest_tables.append({'table_name': 'f_production_countries', 'keys': ['movie_sk', 'release_date', 'iso_3166_1'], 'field': ['name'], 'haveheader': 1 })
-dest_tables.append({'table_name': 'f_classification', 'keys': ['movie_sk', 'genre_sk'], 'field': ['release_date'], 'haveheader': 1 })
+dest_tables.append({'table_name': 'f_crew', 'keys': ['movie_id', 'person_id', 'job'], 'field': ['departament'], 'haveheader': 0 })
+dest_tables.append({'table_name': 'f_status', 'keys': ['movie_id', 'date_status'], 'field': ['status'], 'haveheader': 1 })
+dest_tables.append({'table_name': 'f_cost', 'keys': ['movie_id', 'company_name', 'release_date'], 'field': ['budget', 'revenue'], 'haveheader': 1 })
+dest_tables.append({'table_name': 'f_production_countries', 'keys': ['movie_id', 'release_date', 'iso_3166_1'], 'field': ['name'], 'haveheader': 1 })
+dest_tables.append({'table_name': 'f_classification', 'keys': ['movie_id', 'genre_id'], 'field': ['release_date'], 'haveheader': 1 })
 #src_tables = [item+"_stage" for item in dest_tables]
 
 def upload_file_to_S3(path, key, s3_bucket):
@@ -58,30 +58,55 @@ def merge_insert(src_table, dest_table, src_keys, dest_keys, src_field, dest_fie
     hook = PostgresHook(postgres_conn_id='dw_stones')
     conn = hook.get_conn()
     cursor = conn.cursor()
-    # build the SQL statement
+    stage_unique = src_table+"_unique"
+    # build the SQL statement:q
     print("src: {} dst{}".format(src_table, dest_table))
     sql_statement = "begin transaction; "
     
+    ##Unique values
+    sql_statement += "create temp table "+stage_unique+" as "
+    sql_statement += "select distinct d.* " 
+    sql_statement += "from "+src_table+" d join" 
+    sql_statement += "( select "  
+    for i in range (0,len(src_keys)):
+        sql_statement +=  src_keys[i]
+        if(i < len(src_keys)-1):
+            sql_statement += " , "
+    sql_statement += " from "+src_table
+    sql_statement += " group by "
+    for i in range (0,len(src_keys)):
+        sql_statement +=  src_keys[i]
+        if(i < len(src_keys)-1):
+            sql_statement += " , "
+    sql_statement += " ) l on "
+    for i in range (0,len(src_keys)):
+        sql_statement +=  "d." + src_keys[i] + " = " "l." + dest_keys[i]
+        if(i < len(src_keys)-1):
+            sql_statement += " and "
+    sql_statement +=";"
+
+    ##Update values
     sql_statement += "update " + dest_table + " set "
     for i in range (0,len(src_field)):
-        sql_statement +=  dest_field[i] + " = " + src_table + "." + src_field[i]
+        sql_statement +=  dest_field[i] + " = " +  stage_unique+ "." + src_field[i]
         if(i < len(src_field)-1):
             sql_statement += " , "
-    sql_statement +=" from " +src_table + " where "
+    sql_statement +=" from " +stage_unique + " where "
     for i in range (0,len(src_keys)):
-        sql_statement += src_table + "." + src_keys[i] + " = " + dest_table + "." + dest_keys[i]
+        sql_statement += stage_unique + "." + src_keys[i] + " = " + dest_table + "." + dest_keys[i]
         if(i < len(src_keys)-1):
             sql_statement += " and "
 
     sql_statement += "; "
-    sql_statement += "delete from "+src_table+" using "+dest_table+" where "
+    sql_statement += "delete from "+stage_unique+" using "+dest_table+" where "
     for i in range (0,len(src_keys)):
-        sql_statement += src_table + "." + src_keys[i] + " = " + dest_table + "." + dest_keys[i]
+        sql_statement += stage_unique + "." + src_keys[i] + " = " + dest_table + "." + dest_keys[i]
         if(i < len(src_keys)-1):
             sql_statement += " and "
     sql_statement += ";"
 
-    sql_statement += " insert into " + dest_table + " select * from " + src_table + " ; "
+    sql_statement += " insert into " + dest_table + " select * from " + stage_unique + " ; "
+    sql_statement += " drop table "+stage_unique + " ; "
     sql_statement += " end transaction; "
 
     print(sql_statement)
