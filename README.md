@@ -1,5 +1,12 @@
 # Desafio Stone pagamento #
-Durante a etapa de seleção para a empresa Stone pagamentos foi proposto um desafio para ler o conteudo do site [the movie database](https://www.themoviedb.org/), uma base de dados grátis e de código aberto sobre Filmes e Séries de TV. Criado por Travis Bell em 2008, e responder algumas perguntas acerca dos dados.
+Durante a etapa de seleção para a empresa Stone pagamentos foi proposto um desafio para ler o conteudo do site [the movie database](https://www.themoviedb.org/), uma base de dados grátis e de código aberto sobre Filmes e Séries de TV. Criado por Travis Bell em 2008, e responder as seguintes perguntas acerca dos dados.
+
+1. Dentre os filmes em cartaz, qual o filme com maior receita e qual sua receita e seu orçamento?
+2. Dentre as produtoras com filmes em cartaz ou filmes a serem lançados, qual teve o maior lucro (receita – orçamento) acumulado nos últimos 10 anos? Considere que o lucro é distribuído igualmente entre as companhias produtoras.
+3. Que diretor(a) dirigiu filmes com o maior orçamento acumulado dos últimos 20 anos?
+4. Quais os 3 gêneros com maior número de filmes nos últimos 5 anos
+5. Quais os países com a maior quantidade de filmes em cartaz produzidos em seus territórios?
+
 Logo, apresento uma soluçao de etl utilizando Apache airflow, Amazon S3 e Amazon redshift. 
 
 ## Data-warehouse ##
@@ -8,7 +15,7 @@ Logo, apresento uma soluçao de etl utilizando Apache airflow, Amazon S3 e Amazo
 Durante a modelagem de dados pensei numa estrutura dimensional com quatro dimensões d\_date, d\_movie, d\_person, d\_genre e cinco tabela fato f\_status, f\_production\_countries, f\_classification, f\_cost, f\_crew no total de nove tabelas, seu diagrama relacional ficou assim:
 
 
-![](https://workolistexample.s3.amazonaws.com/data-set/schema.png)
+![](https://workolistexample.s3.amazonaws.com/data-set/Schema.png)
 
 
 
@@ -19,7 +26,7 @@ Em seguida é apresentado os aspectos de arquitetura.
 ## Arquitetura proposta ##
 
 
-Na arquitetura foi utilizado o apache-airflow, Amazon S3 e Amazon Redshift. Foi escolhido esse conjunto primeiramente pelo apache-airflow por usar python para fazer etl uma linguaguem aplamente usada para analise de dados e ciência de dados, o conjunto amazon S3 e amazon Redshift por possuir a arquitetura de processamento paralelo em massa para carregar os dados do S3 para redshift, essa função pode ser amplamente explorada, fatiando arquivos grandes para tamanhos menores, em seguida é apresentado os detalhes de construção.
+Na arquitetura foi utilizado o apache-airflow, Amazon S3 e Amazon Redshift. Foi escolhido esse conjunto primeiramente pelo apache-airflow por utilizar python para escrever os passos, uma liguaguem de fácil aprendizado, o conjunto amazon S3 e amazon Redshift por possuir a arquitetura de processamento paralelo em massa para carregar os dados do S3 para redshift, essa função pode ser amplamente explorada, fatiando arquivos grandes para tamanhos menores. Em seguida é apresentado os detalhes de construção tanto do etl a configuração da infraestrutura. Abaixo é mostrado um diagrama do sentido dos dados.
 
 
 ![](https://workolistexample.s3.amazonaws.com/data-set/fluxo_s3_redshift.png)
@@ -35,7 +42,7 @@ Basicamente a elaboração da estrutura segue os seguintes passos:
 ### Criar bucket S3 E Cluster Redshift ###
 
 
-Foi configurado as credenciais AMI e instalado a amazon cli para poder interagir os servicos da amazon pela linha de comando, foi executado o seguinte script para criar o bucket S3 chamado stones11323 e o cluster redshift com dois nós dc2.large.
+Foi configurado as credenciais AMI e instalado a amazon cli para poder interagir com os servicos da amazon pela linha de comando também foi executado o seguinte script para criar o bucket S3 chamado stones11323 e o cluster redshift com dois nós dc2.large, os scripts estão salvos no diretório etl\_script\_stones/model/, o script create\_redshift.sh está ilustrado abaixo, apenas é necessário nomear as variáveis de ambiente cluster\_name, redshift\_dbname, redshift\_username, redshift\_password, que são nome do cluster, nome do banco de dados, nome de usuário e senha. 
 
     
     	#!/bin/bash -e
@@ -68,7 +75,7 @@ Com o endpoint do banco retornado e armazenado na variável de ambiente endpoint
 	psql -f model.sql	
 
 
-Após a conexão é feita a importação do script abaixo chamado *model.sql.*
+Após a conexão ter sido estabelecida, a ultima linha do banco carrega o esquema *model.sql.* ilustrado abaixo:
 
 
 
@@ -178,12 +185,18 @@ Após a conexão é feita a importação do script abaixo chamado *model.sql.*
 ### Processo de etl ###
 
 
-Nessa fase foi utilizado o airflow executando 22 passos abaixo. primeiro é lido os dados do filmes em cartaz e em lancamento com o passo read\_movies e os generos paralelamente, em seguida, também é executado em paralelo os detalhes do filme e as comissões técnica, apos a leitura da comissao tecnica é lido todos filmes produzidos pelos diretores, após todas essas etapas terem sidos construidas, é feito upload dos arquivos no s3 no passo upload\_to\_S3. nos penultimos passos com oito passos em paralelo é copiado os dados do s3 para o redshift em uma tabela temporária nos passos com inicial load\_s3 e finalizando com o passo merge\_s3 que atualiza a os dados no s3 incrementalmente. logo a adiante é apresentado as respostas para as perguntas
+Nessa fase foi utilizado o airflow executando 22 passos, primeiro é lido os dados dos filmes em cartaz e em lançamento com o passo read\_movies e os generos paralelamente, em seguida, também é executado em paralelo os detalhes do filme e as comissões técnica, apos a leitura da comissao tecnica é lido todos filmes produzidos pelos diretores, após todas essas etapas terem sidos construidas, é feito upload dos arquivos no S3. Nos penultimos passos são executados oito etapas em paralelo, essas etapas que iniciam com o prefixo load\_s3\_ são copiados os dados do S3 para suas respectiva tabela temporária, nas ultimas linhas do schema acima é possível ver nove tabela temporárias criadas justamente para esse fim.
+Nos passos finais que iniciam com o prefixo merge\_s3\_to é feito a copia da tabela temporária para a tabela em produção, preservando os dados antigos e rescrevendos os novos.
+
+Em seguida é mostrado as respostas das questões levandatas acima.
 
 
 ![](https://workolistexample.s3.amazonaws.com/data-set/airflow_step.png)
 
 
 ### Respostas  ###
+
+Para a produção das resposta, foi utilizado o microsoft power bi conectado com o cluster redshift, ao clicar no link abaixo será redirecionado para o painel com as resposta das respostas acima:
+
 
 [Respostas](http://bit.ly/2P4HFkP)
